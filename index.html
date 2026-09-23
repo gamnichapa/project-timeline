@@ -42,6 +42,26 @@
   .legend span{display:inline-flex;align-items:center;gap:6px;}
   .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
 
+  .toolbar{display:flex;justify-content:flex-end;margin-bottom:14px;}
+  .btn{background:var(--ink);color:var(--bg);border:none;border-radius:8px;
+    padding:8px 14px;font-size:13px;cursor:pointer;font-weight:600;}
+  .btn.ghost{background:transparent;color:var(--sub);border:1px solid var(--line);}
+  .btn:hover{opacity:0.88;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:18px 20px;margin-bottom:20px;}
+  .panel h2{margin:0 0 14px;font-size:15px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block;font-size:12px;color:var(--sub);margin-bottom:5px;}
+  .field input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:7px;
+    background:var(--bg);color:var(--ink);font-size:13.5px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .stage-item{display:flex;gap:8px;margin-bottom:8px;align-items:center;}
+  .stage-item input{flex:1;}
+  .rm{background:none;border:none;color:var(--late);cursor:pointer;font-size:16px;padding:0 6px;}
+  .panel-actions{display:flex;gap:10px;margin-top:4px;}
+  #saveMsg{font-size:12.5px;margin-left:6px;}
+
   .board{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
   .months{display:grid;grid-template-columns:200px repeat(6,1fr);
     border-bottom:1px solid var(--line);font-size:11.5px;color:var(--sub);}
@@ -58,12 +78,18 @@
   .track{position:relative;height:44px;grid-column:2 / span 6;background:
     repeating-linear-gradient(to right, transparent, transparent calc(100%/6 - 1px), var(--line) calc(100%/6 - 1px), var(--line) calc(100%/6));
   }
-  .bar{position:absolute;top:13px;height:18px;border-radius:5px;
-    display:flex;align-items:center;padding:0 8px;font-size:11px;color:#fff;white-space:nowrap;overflow:hidden;}
-  .bar.ontrack{background:var(--ontrack);}
-  .bar.risk{background:var(--risk);}
-  .bar.late{background:var(--late);}
-  .bar.done{background:var(--done);}
+  .bar{position:absolute;top:13px;height:18px;border-radius:5px;overflow:hidden;
+    display:flex;box-shadow:0 0 0 1px rgba(0,0,0,.04);}
+  .bar.ontrack{--c:var(--ontrack);}
+  .bar.risk{--c:var(--risk);}
+  .bar.late{--c:var(--late);}
+  .bar.done{--c:var(--done);}
+  .seg{background:var(--c);flex:1 1 0;display:flex;align-items:center;justify-content:center;
+    font-size:10px;color:#fff;white-space:nowrap;overflow:hidden;padding:0 4px;
+    border-right:1px solid rgba(255,255,255,.28);position:relative;}
+  .seg:last-child{border-right:none;}
+  .seg.current{filter:brightness(1.12);}
+  .seg.done-seg{filter:brightness(0.8) saturate(0.7);}
   .ms{position:absolute;top:8px;width:0;height:0;
     border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--ink);}
 
@@ -92,6 +118,47 @@
 
 <main>
 
+  <div class="toolbar">
+    <button class="btn" id="toggleConfig">+ เพิ่มโปรเจคใหม่</button>
+  </div>
+
+  <div class="panel" id="configPanel" style="display:none;">
+    <h2>Config โปรเจคใหม่</h2>
+
+    <div class="row2">
+      <div class="field">
+        <label>Project name</label>
+        <input type="text" id="cfgName" placeholder="เช่น ระบบ CRM ลูกค้าองค์กร">
+      </div>
+      <div class="field">
+        <label>ชื่อผู้รับผิดชอบ</label>
+        <input type="text" id="cfgOwner" placeholder="เช่น นภัส">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>Timeline เริ่ม</label>
+        <input type="date" id="cfgStart">
+      </div>
+      <div class="field">
+        <label>Timeline สิ้นสุด</label>
+        <input type="date" id="cfgEnd">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Stage ของโปรเจค</label>
+      <div id="stageList"></div>
+      <button class="btn ghost" id="addStage" type="button">+ เพิ่ม Stage</button>
+    </div>
+
+    <div class="panel-actions">
+      <button class="btn" id="saveProject">บันทึกโปรเจค</button>
+      <span id="saveMsg"></span>
+    </div>
+  </div>
+
   <div class="summary">
     <div class="stat"><div class="n">6</div><div class="l">โปรเจคทั้งหมด</div></div>
     <div class="stat"><div class="n">3</div><div class="l">ตามแผน</div></div>
@@ -108,55 +175,11 @@
   </div>
 
   <div class="board">
-    <div class="months">
+    <div class="months" id="monthsRow">
       <div></div><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div>
     </div>
 
-    <div class="row">
-      <div class="proj"><div class="name">ระบบ CRM ลูกค้าองค์กร</div><div class="owner">PM: นภัส</div></div>
-      <div class="track">
-        <div class="bar ontrack" style="left:0%;width:66%;">Design → Build</div>
-        <div class="ms" style="left:66%;"></div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="proj"><div class="name">Mobile App v2</div><div class="owner">PM: ธีรภัทร</div></div>
-      <div class="track">
-        <div class="bar risk" style="left:16%;width:50%;">UAT ล่าช้า 2 สัปดาห์</div>
-        <div class="ms" style="left:66%;"></div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="proj"><div class="name">Data Migration Legacy → Cloud</div><div class="owner">PM: ปวีณา</div></div>
-      <div class="track">
-        <div class="bar late" style="left:0%;width:40%;">เกิน Deadline</div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="proj"><div class="name">Internal Portal Revamp</div><div class="owner">PM: กิตติ</div></div>
-      <div class="track">
-        <div class="bar done" style="left:0%;width:30%;">เสร็จสิ้น</div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="proj"><div class="name">Payment Gateway Integration</div><div class="owner">PM: สุพิชฌาย์</div></div>
-      <div class="track">
-        <div class="bar ontrack" style="left:33%;width:33%;">Integration</div>
-        <div class="ms" style="left:66%;"></div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="proj"><div class="name">Analytics Dashboard</div><div class="owner">PM: อรรถพล</div></div>
-      <div class="track">
-        <div class="bar risk" style="left:50%;width:33%;">รอ Requirement Sign-off</div>
-      </div>
-    </div>
-
+    <div id="boardBody"></div>
   </div>
 
 </main>
@@ -167,17 +190,173 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = "https://ruqpeurrssoavamrnekv.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_a3Pc2WI5aAYmjsm-8sUwtg_xetSPaA_";
+  const SUPABASE_URL = "https://Nywdujxnhzvvlaakxlrz.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_aalM4bF-bCJXN_I2DkNrRw_jDUCNxLd";
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ตัวอย่าง: ดึงข้อมูลโปรเจคจากตาราง projects ใน Supabase
-  // async function loadProjects() {
-  //   const { data, error } = await supabaseClient.from('projects').select('*');
-  //   if (error) { console.error(error); return; }
-  //   console.log(data);
-  // }
-  // loadProjects();
+  // ---- Config panel: toggle ----
+  const toggleBtn = document.getElementById('toggleConfig');
+  const panel = document.getElementById('configPanel');
+  toggleBtn.addEventListener('click', () => {
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  });
+
+  // ---- Stage rows (dynamic add/remove) ----
+  const stageList = document.getElementById('stageList');
+  const defaultStages = ['Get Requirement', 'BRD', 'Develop', 'SIT', 'UAT', 'Deploy'];
+
+  function addStageRow(value = '') {
+    const row = document.createElement('div');
+    row.className = 'stage-item';
+    row.innerHTML = `
+      <input type="text" class="stage-input" value="${value}" placeholder="ชื่อ stage">
+      <button class="rm" type="button" title="ลบ">×</button>
+    `;
+    row.querySelector('.rm').addEventListener('click', () => row.remove());
+    stageList.appendChild(row);
+  }
+  defaultStages.forEach(addStageRow);
+
+  document.getElementById('addStage').addEventListener('click', () => addStageRow(''));
+
+  // ---- Save project + stages to Supabase ----
+  document.getElementById('saveProject').addEventListener('click', async () => {
+    const msg = document.getElementById('saveMsg');
+    const name = document.getElementById('cfgName').value.trim();
+    const owner = document.getElementById('cfgOwner').value.trim();
+    const start = document.getElementById('cfgStart').value;
+    const end = document.getElementById('cfgEnd').value;
+    const stages = Array.from(document.querySelectorAll('.stage-input'))
+      .map(i => i.value.trim())
+      .filter(v => v.length > 0);
+
+    if (!name || !start || !end) {
+      msg.style.color = 'var(--late)';
+      msg.textContent = 'กรุณากรอก Project name และ Timeline ให้ครบ';
+      return;
+    }
+
+    msg.style.color = 'var(--sub)';
+    msg.textContent = 'กำลังบันทึก...';
+
+    // 1) สร้างโปรเจค (owner_name เก็บเป็น text ตรง ๆ — ถ้าต้องการผูกกับ profiles.id ค่อยเปลี่ยนภายหลัง)
+    const { data: project, error: projErr } = await supabaseClient
+      .from('projects')
+      .insert({ name, owner_name: owner, start_date: start, end_date: end, status: 'planning' })
+      .select()
+      .single();
+
+    if (projErr) {
+      msg.style.color = 'var(--late)';
+      msg.textContent = 'บันทึกไม่สำเร็จ: ' + projErr.message;
+      return;
+    }
+
+    // 2) สร้าง stage (phases) ที่ผูกกับโปรเจคนี้
+    if (stages.length > 0) {
+      const phaseRows = stages.map((s, idx) => ({
+        project_id: project.id,
+        name: s,
+        sort_order: idx
+      }));
+      const { error: phaseErr } = await supabaseClient.from('phases').insert(phaseRows);
+      if (phaseErr) {
+        msg.style.color = 'var(--late)';
+        msg.textContent = 'บันทึกโปรเจคสำเร็จ แต่บันทึก stage ไม่สำเร็จ: ' + phaseErr.message;
+        return;
+      }
+    }
+
+    msg.style.color = 'var(--ontrack)';
+    msg.textContent = `บันทึก "${name}" สำเร็จ`;
+    loadRealProjects();
+  });
+
+  // ---- Board rendering: each project's stages shown as segments on the timeline ----
+  const boardBody = document.getElementById('boardBody');
+  const monthsRow = document.getElementById('monthsRow');
+
+  // mock fallback (ใช้ตอนยังไม่มีข้อมูลจริงใน Supabase)
+  const mockProjects = [
+    { name:'ระบบ CRM ลูกค้าองค์กร', owner:'นภัส', status:'ontrack', start:'2026-04-01', end:'2026-07-20',
+      stages:[{name:'Get Requirement'},{name:'BRD'},{name:'Develop'},{name:'SIT (current)', current:true}] },
+    { name:'Mobile App v2', owner:'ธีรภัทร', status:'risk', start:'2026-05-01', end:'2026-07-25',
+      stages:[{name:'Develop'},{name:'SIT'},{name:'UAT ล่าช้า', current:true}] },
+    { name:'Data Migration Legacy → Cloud', owner:'ปวีณา', status:'late', start:'2026-04-01', end:'2026-06-10',
+      stages:[{name:'BRD'},{name:'Develop'},{name:'SIT เกิน Deadline', current:true}] },
+    { name:'Internal Portal Revamp', owner:'กิตติ', status:'done', start:'2026-04-01', end:'2026-05-05',
+      stages:[{name:'Develop'},{name:'Deploy — เสร็จสิ้น', current:true}] },
+    { name:'Payment Gateway Integration', owner:'สุพิชฌาย์', status:'ontrack', start:'2026-06-01', end:'2026-07-25',
+      stages:[{name:'Develop'},{name:'Integration', current:true}] },
+    { name:'Analytics Dashboard', owner:'อรรถพล', status:'risk', start:'2026-06-15', end:'2026-07-31',
+      stages:[{name:'Get Requirement'},{name:'รอ Sign-off', current:true}] },
+  ];
+
+  function monthLabelsBetween(minD, maxD) {
+    const labels = [];
+    const th = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+    let d = new Date(minD.getFullYear(), minD.getMonth(), 1);
+    const end = new Date(maxD.getFullYear(), maxD.getMonth(), 1);
+    while (d <= end) { labels.push(`${th[d.getMonth()]} ${d.getFullYear()+543}`); d.setMonth(d.getMonth()+1); }
+    return labels;
+  }
+
+  function renderBoard(projects) {
+    if (!projects.length) {
+      boardBody.innerHTML = `<div style="padding:24px;color:var(--sub);font-size:13px;">ยังไม่มีโปรเจค — กด "+ เพิ่มโปรเจคใหม่" เพื่อเริ่มต้น</div>`;
+      monthsRow.innerHTML = '<div></div>';
+      return;
+    }
+    const starts = projects.map(p => new Date(p.start));
+    const ends = projects.map(p => new Date(p.end));
+    const minD = new Date(Math.min(...starts));
+    const maxD = new Date(Math.max(...ends));
+    const totalMs = maxD - minD || 1;
+    const months = monthLabelsBetween(minD, maxD);
+
+    monthsRow.innerHTML = '<div></div>' + months.map(m => `<div>${m}</div>`).join('');
+    monthsRow.style.gridTemplateColumns = `200px repeat(${months.length},1fr)`;
+
+    boardBody.innerHTML = projects.map(p => {
+      const s = new Date(p.start), e = new Date(p.end);
+      const left = ((s - minD) / totalMs) * 100;
+      const width = Math.max(((e - s) / totalMs) * 100, 2);
+      const segs = p.stages.map(st =>
+        `<div class="seg ${st.current ? 'current' : 'done-seg'}">${st.name}</div>`
+      ).join('');
+      return `
+        <div class="row" style="grid-template-columns:200px repeat(${months.length},1fr);">
+          <div class="proj"><div class="name">${p.name}</div><div class="owner">PM: ${p.owner}</div></div>
+          <div class="track" style="grid-column:2 / span ${months.length};">
+            <div class="bar ${p.status}" style="left:${left}%;width:${width}%;">${segs}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  renderBoard(mockProjects); // แสดง mock ก่อน แล้วค่อยเปลี่ยนเป็นข้อมูลจริงถ้ามี
+
+  async function loadRealProjects() {
+    const { data, error } = await supabaseClient
+      .from('projects')
+      .select('*, phases(*)')
+      .order('start_date');
+    if (error || !data || data.length === 0) return; // ไม่มีข้อมูลจริง — คงแสดง mock ต่อไป
+
+    const real = data.map(p => ({
+      name: p.name,
+      owner: p.owner_name || '-',
+      status: p.status === 'planning' ? 'ontrack' : p.status,
+      start: p.start_date,
+      end: p.end_date,
+      stages: (p.phases || [])
+        .sort((a,b) => a.sort_order - b.sort_order)
+        .map((ph, idx, arr) => ({ name: ph.name, current: idx === arr.length - 1 }))
+    })).filter(p => p.stages.length > 0);
+
+    if (real.length > 0) renderBoard(real);
+  }
+  loadRealProjects();
 </script>
 
 </body>
