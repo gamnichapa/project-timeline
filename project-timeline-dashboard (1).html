@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Master Project Timeline</title>
+<style>
+  :root{
+    --ink:#1b2430; --sub:#5b6672; --line:#dde2e7; --bg:#f6f7f9; --panel:#ffffff;
+    --track:#eef0f3;
+    --ontrack:#2f7a5c; --risk:#b9832a; --late:#b3402f; --done:#6a6f77;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#e7eaee; --sub:#9aa4b0; --line:#2a323c; --bg:#12161b; --panel:#181d24; --track:#222831;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e7eaee; --sub:#9aa4b0; --line:#2a323c; --bg:#12161b; --panel:#181d24; --track:#222831;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: env(safe-area-inset-top, 0px);}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+
+  header{padding:22px 28px 16px;border-bottom:1px solid var(--line);
+    display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+  header h1{font-size:19px;margin:0;font-weight:650;letter-spacing:-0.01em;}
+  header p{margin:2px 0 0;color:var(--sub);font-size:13px;}
+
+  main{padding:20px 28px 60px;max-width:1180px;margin:0 auto;}
+
+  .summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;min-width:130px;}
+  .stat .n{font-size:22px;font-weight:650;}
+  .stat .l{font-size:12px;color:var(--sub);margin-top:2px;}
+
+  .legend{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap;font-size:12.5px;color:var(--sub);}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+
+  .board{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+  .months{display:grid;grid-template-columns:200px repeat(6,1fr);
+    border-bottom:1px solid var(--line);font-size:11.5px;color:var(--sub);}
+  .months div{padding:9px 8px;border-left:1px solid var(--line);}
+  .months div:first-child{border-left:none;}
+
+  .row{display:grid;grid-template-columns:200px repeat(6,1fr);align-items:center;
+    border-bottom:1px solid var(--line);}
+  .row:last-child{border-bottom:none;}
+  .proj{padding:12px 14px;}
+  .proj .name{font-weight:600;font-size:13.5px;}
+  .proj .owner{font-size:11.5px;color:var(--sub);margin-top:2px;}
+
+  .track{position:relative;height:44px;grid-column:2 / span 6;background:
+    repeating-linear-gradient(to right, transparent, transparent calc(100%/6 - 1px), var(--line) calc(100%/6 - 1px), var(--line) calc(100%/6));
+  }
+  .bar{position:absolute;top:13px;height:18px;border-radius:5px;
+    display:flex;align-items:center;padding:0 8px;font-size:11px;color:#fff;white-space:nowrap;overflow:hidden;}
+  .bar.ontrack{background:var(--ontrack);}
+  .bar.risk{background:var(--risk);}
+  .bar.late{background:var(--late);}
+  .bar.done{background:var(--done);}
+  .ms{position:absolute;top:8px;width:0;height:0;
+    border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:8px solid var(--ink);}
+
+  .status{padding:12px 14px;grid-column:1;display:none;}
+
+  footer{max-width:1180px;margin:0 auto;padding:0 28px 40px;color:var(--sub);font-size:12px;}
+
+  @media (max-width:720px){
+    header, main, footer{padding-left:16px;padding-right:16px;}
+    .months{display:none;}
+    .row{grid-template-columns:1fr;}
+    .track{grid-column:1;height:38px;}
+    .proj{padding-bottom:0;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Master Project Timeline</h1>
+    <p>ภาพรวม Timeline ของทุกโปรเจค — Apr 2026 – Sep 2026</p>
+  </div>
+  <p style="color:var(--sub);font-size:12.5px;">อัปเดตล่าสุด 23 ก.ย. 2026</p>
+</header>
+
+<main>
+
+  <div class="summary">
+    <div class="stat"><div class="n">6</div><div class="l">โปรเจคทั้งหมด</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">ตามแผน</div></div>
+    <div class="stat"><div class="n">2</div><div class="l">เสี่ยงล่าช้า</div></div>
+    <div class="stat"><div class="n">1</div><div class="l">ล่าช้าแล้ว</div></div>
+  </div>
+
+  <div class="legend">
+    <span><i class="dot" style="background:var(--ontrack)"></i>ตามแผน</span>
+    <span><i class="dot" style="background:var(--risk)"></i>เสี่ยงล่าช้า</span>
+    <span><i class="dot" style="background:var(--late)"></i>ล่าช้า</span>
+    <span><i class="dot" style="background:var(--done)"></i>เสร็จสิ้น</span>
+    <span>▲ Milestone</span>
+  </div>
+
+  <div class="board">
+    <div class="months">
+      <div></div><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div><div>Aug</div><div>Sep</div>
+    </div>
+
+    <div class="row">
+      <div class="proj"><div class="name">ระบบ CRM ลูกค้าองค์กร</div><div class="owner">PM: นภัส</div></div>
+      <div class="track">
+        <div class="bar ontrack" style="left:0%;width:66%;">Design → Build</div>
+        <div class="ms" style="left:66%;"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="proj"><div class="name">Mobile App v2</div><div class="owner">PM: ธีรภัทร</div></div>
+      <div class="track">
+        <div class="bar risk" style="left:16%;width:50%;">UAT ล่าช้า 2 สัปดาห์</div>
+        <div class="ms" style="left:66%;"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="proj"><div class="name">Data Migration Legacy → Cloud</div><div class="owner">PM: ปวีณา</div></div>
+      <div class="track">
+        <div class="bar late" style="left:0%;width:40%;">เกิน Deadline</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="proj"><div class="name">Internal Portal Revamp</div><div class="owner">PM: กิตติ</div></div>
+      <div class="track">
+        <div class="bar done" style="left:0%;width:30%;">เสร็จสิ้น</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="proj"><div class="name">Payment Gateway Integration</div><div class="owner">PM: สุพิชฌาย์</div></div>
+      <div class="track">
+        <div class="bar ontrack" style="left:33%;width:33%;">Integration</div>
+        <div class="ms" style="left:66%;"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="proj"><div class="name">Analytics Dashboard</div><div class="owner">PM: อรรถพล</div></div>
+      <div class="track">
+        <div class="bar risk" style="left:50%;width:33%;">รอ Requirement Sign-off</div>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  หน้าตัวอย่าง (Prototype) สำหรับให้ทีม Dev ใช้ประกอบการออกแบบระบบ — ข้อมูลเป็นตัวอย่าง ยังไม่เชื่อมต่อฐานข้อมูลจริง
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://ruqpeurrssoavamrnekv.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_a3Pc2WI5aAYmjsm-8sUwtg_xetSPaA_";
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ตัวอย่าง: ดึงข้อมูลโปรเจคจากตาราง projects ใน Supabase
+  // async function loadProjects() {
+  //   const { data, error } = await supabaseClient.from('projects').select('*');
+  //   if (error) { console.error(error); return; }
+  //   console.log(data);
+  // }
+  // loadProjects();
+</script>
+
+</body>
+</html>
